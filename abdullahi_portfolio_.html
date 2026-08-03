@@ -1,0 +1,2627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abdullahi Ahmad Aminu — Polyglot AI Engineer</title>
+    <meta name="description" content="Polyglot AI Engineer building production eval harnesses, agentic systems, and RLHF infrastructure. Python, Go, Rust, TypeScript. M.S. Data Science (USF), B.Sc. Statistics (Columbia).">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a365d;
+            --primary-light: #2c5282;
+            --accent: #c05621;
+            --accent-light: #dd6b20;
+            --bg: #f7fafc;
+            --card: #ffffff;
+            --text: #1a202c;
+            --text-muted: #718096;
+            --border: #e2e8f0;
+            --success: #38a169;
+            --warning: #d69e2e;
+            --danger: #e53e3e;
+            --rust: #ce422b;
+            --go: #00add8;
+            --python: #3776ab;
+            --ts: #3178c6;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+            --shadow: 0 4px 6px rgba(0,0,0,0.07);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+            --radius: 12px;
+            --radius-lg: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        .navbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+        }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 64px;
+        }
+        .nav-logo {
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .nav-logo i { color: var(--accent); }
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 0.85rem;
+            transition: var(--transition);
+            position: relative;
+        }
+        .nav-links a:hover, .nav-links a.active { color: var(--primary); }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px; left: 0;
+            width: 0; height: 2px;
+            background: var(--accent);
+            transition: var(--transition);
+        }
+        .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+        .nav-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        .btn-nav {
+            padding: 0.5rem 1.2rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        .btn-nav:hover {
+            background: var(--primary-light);
+            transform: translateY(-1px);
+        }
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text);
+            cursor: pointer;
+        }
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8rem 2rem 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 80% 50% at 20% 40%, rgba(26,54,93,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse 60% 40% at 80% 60%, rgba(192,86,33,0.06) 0%, transparent 50%);
+        }
+        .hero-grid {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(26,54,93,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(26,54,93,0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 30%, transparent 70%);
+        }
+        .hero-content {
+            max-width: 900px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1rem;
+            background: rgba(192,86,33,0.1);
+            color: var(--accent);
+            border-radius: 100px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+        .hero-badge i { font-size: 0.8rem; }
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+        }
+        .hero h1 .highlight {
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-subtitle {
+            font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            font-weight: 400;
+        }
+        .hero-tagline {
+            font-size: 1rem;
+            color: var(--text-muted);
+            max-width: 650px;
+            margin: 0 auto 2rem;
+        }
+        .tech-stack-bar {
+            display: flex;
+            justify-content: center;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+        .tech-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.35rem 0.9rem;
+            background: var(--card);
+            border: 1.5px solid var(--border);
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+        .tech-pill:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-2px);
+        }
+        .tech-pill i { font-size: 0.85rem; }
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-bottom: 2.5rem;
+        }
+        .stat-item { text-align: center; }
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1;
+        }
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 0.3rem;
+        }
+        .hero-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 0.9rem 2rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+            border: none;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            box-shadow: 0 4px 15px rgba(26,54,93,0.3);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(26,54,93,0.4);
+        }
+        .btn-secondary {
+            background: var(--card);
+            color: var(--text);
+            border: 2px solid var(--border);
+        }
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-2px);
+        }
+        .hero-contact-bar {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2.5rem;
+            flex-wrap: wrap;
+        }
+        .hero-contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        .hero-contact-item:hover { color: var(--accent); }
+        .hero-contact-item i { color: var(--accent); font-size: 1rem; }
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-10px); }
+            60% { transform: translateX(-50%) translateY(-5px); }
+        }
+        section {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .section-label {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            background: rgba(192,86,33,0.1);
+            color: var(--accent);
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.8rem;
+        }
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+        }
+        .section-desc {
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+            font-size: 1.05rem;
+        }
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 4rem;
+            align-items: start;
+        }
+        .about-card {
+            background: var(--card);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+        }
+        .about-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 20px rgba(26,54,93,0.25);
+        }
+        .about-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.3rem;
+        }
+        .about-card .role {
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        .about-card .location {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+        .about-languages {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .lang-tag {
+            padding: 0.3rem 0.8rem;
+            background: var(--bg);
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+        }
+        .about-text p {
+            font-size: 1.05rem;
+            color: var(--text);
+            margin-bottom: 1.2rem;
+            line-height: 1.8;
+        }
+        .about-highlights {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        .highlight-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+            padding: 1rem;
+            background: var(--card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+        .highlight-item:hover {
+            box-shadow: var(--shadow);
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+        .highlight-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: rgba(192,86,33,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        .highlight-item h4 {
+            font-size: 0.95rem;
+            margin-bottom: 0.2rem;
+        }
+        .highlight-item p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        .skill-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 1.8rem;
+            border: 1px solid var(--border);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        .skill-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--accent), var(--accent-light));
+            opacity: 0;
+            transition: var(--transition);
+        }
+        .skill-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent);
+        }
+        .skill-card:hover::before { opacity: 1; }
+        .skill-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+        .skill-name {
+            font-weight: 600;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .skill-name i { color: var(--accent); font-size: 0.9rem; }
+        .skill-level {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        .skill-bar {
+            height: 6px;
+            background: var(--bg);
+            border-radius: 100px;
+            overflow: hidden;
+        }
+        .skill-fill {
+            height: 100%;
+            border-radius: 100px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-light));
+            transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 0;
+        }
+        .skill-card.visible .skill-fill { width: var(--width); }
+        .skill-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 0.6rem;
+        }
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 24px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--accent), var(--primary));
+        }
+        .timeline-item {
+            position: relative;
+            padding-left: 70px;
+            padding-bottom: 2.5rem;
+        }
+        .timeline-item:last-child { padding-bottom: 0; }
+        .timeline-dot {
+            position: absolute;
+            left: 15px;
+            top: 4px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--card);
+            border: 3px solid var(--accent);
+            box-shadow: 0 0 0 4px var(--bg);
+        }
+        .timeline-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 1.8rem;
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+        .timeline-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateX(4px);
+        }
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.8rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .timeline-title { font-size: 1.1rem; font-weight: 700; }
+        .timeline-company {
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .timeline-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        .timeline-meta i { font-size: 0.8rem; }
+        .timeline-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.2rem 0.6rem;
+            background: rgba(56,161,105,0.1);
+            color: var(--success);
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        .timeline-desc {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        .timeline-desc ul { list-style: none; padding: 0; }
+        .timeline-desc li {
+            position: relative;
+            padding-left: 1.2rem;
+            margin-bottom: 0.4rem;
+        }
+        .timeline-desc li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.6rem;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent);
+        }
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+        .project-card {
+            background: var(--card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        .project-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent);
+        }
+        .project-header {
+            padding: 1.8rem 1.8rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .project-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--border);
+            line-height: 1;
+        }
+        .project-tags {
+            display: flex;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+        }
+        .project-tag {
+            padding: 0.25rem 0.6rem;
+            background: var(--bg);
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+        .project-tag.accent {
+            background: rgba(192,86,33,0.1);
+            color: var(--accent);
+        }
+        .project-tag.python { background: rgba(55,118,171,0.1); color: var(--python); }
+        .project-tag.go { background: rgba(0,173,216,0.1); color: var(--go); }
+        .project-tag.rust { background: rgba(206,66,43,0.1); color: var(--rust); }
+        .project-tag.ts { background: rgba(49,120,198,0.1); color: var(--ts); }
+        .project-body {
+            padding: 1rem 1.8rem 1.5rem;
+        }
+        .project-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .project-desc {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        .project-preview {
+            background: var(--bg);
+            border-radius: var(--radius);
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border);
+        }
+        .preview-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+        }
+        .preview-content {
+            font-size: 0.85rem;
+            color: var(--text);
+            line-height: 1.6;
+        }
+        .preview-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+        .preview-table th {
+            text-align: left;
+            padding: 0.4rem 0.6rem;
+            background: var(--card);
+            font-weight: 600;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+        }
+        .preview-table td {
+            padding: 0.4rem 0.6rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text);
+        }
+        .preview-table tr:last-child td { border-bottom: none; }
+        .score-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.2rem;
+            padding: 0.15rem 0.5rem;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        .score-high { background: rgba(56,161,105,0.15); color: var(--success); }
+        .score-med { background: rgba(214,158,46,0.15); color: var(--warning); }
+        .score-low { background: rgba(229,62,62,0.15); color: var(--danger); }
+        .project-footer {
+            padding: 0 1.8rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .project-expand {
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            transition: var(--transition);
+        }
+        .project-card:hover .project-expand { gap: 0.6rem; }
+        .project-detail {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .project-detail.open { max-height: 2000px; }
+        .project-detail-inner { padding: 0 1.8rem 1.8rem; }
+        .detail-section { margin-bottom: 1.5rem; }
+        .detail-section:last-child { margin-bottom: 0; }
+        .detail-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent);
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+        }
+        .detail-text {
+            font-size: 0.9rem;
+            color: var(--text);
+            line-height: 1.7;
+            background: var(--bg);
+            padding: 1rem;
+            border-radius: var(--radius);
+            border-left: 3px solid var(--accent);
+        }
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .comparison-col {
+            background: var(--bg);
+            padding: 1rem;
+            border-radius: var(--radius);
+        }
+        .comparison-col h5 {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .comparison-col.before { border-left: 3px solid var(--danger); }
+        .comparison-col.after { border-left: 3px solid var(--success); }
+        .comparison-col p {
+            font-size: 0.85rem;
+            color: var(--text);
+            line-height: 1.6;
+            margin: 0;
+        }
+        .error-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+        .error-table th {
+            text-align: left;
+            padding: 0.5rem;
+            background: var(--card);
+            font-weight: 600;
+            color: var(--text-muted);
+            border-bottom: 2px solid var(--border);
+        }
+        .error-table td {
+            padding: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .error-before { color: var(--danger); text-decoration: line-through; }
+        .error-after { color: var(--success); font-weight: 600; }
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.2rem;
+        }
+        .achievement-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 1.8rem;
+            border: 1px solid var(--border);
+            transition: var(--transition);
+            text-align: center;
+        }
+        .achievement-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent);
+        }
+        .achievement-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.3rem;
+            margin: 0 auto 1rem;
+            box-shadow: 0 4px 12px rgba(192,86,33,0.3);
+        }
+        .achievement-card h4 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .achievement-card p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+        .edu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        .edu-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 1.8rem;
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+        .edu-card:hover { box-shadow: var(--shadow-lg); }
+        .edu-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+        .edu-card h4 {
+            font-size: 1.05rem;
+            margin-bottom: 0.3rem;
+        }
+        .edu-card .institution {
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.3rem;
+        }
+        .edu-card .year { color: var(--text-muted); font-size: 0.85rem; }
+        .cert-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 1rem;
+        }
+        .cert-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+        }
+        .cert-list li:last-child { border-bottom: none; }
+        .cert-list li i { color: var(--success); font-size: 0.8rem; }
+        .contact-section {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: var(--radius-lg);
+            padding: 4rem 2rem;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        .contact-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        .contact-content { position: relative; z-index: 1; }
+        .contact-section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            margin-bottom: 0.8rem;
+        }
+        .contact-section p {
+            opacity: 0.85;
+            max-width: 500px;
+            margin: 0 auto 2rem;
+            font-size: 1.05rem;
+        }
+        .contact-grid {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 1rem 1.5rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: var(--radius);
+            text-decoration: none;
+            color: white;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+        }
+        .contact-item:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+        .contact-item i { font-size: 1.1rem; }
+        .contact-item .label {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .contact-item .value {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        .contact-item .info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .btn-contact {
+            padding: 1rem 2.5rem;
+            background: white;
+            color: var(--primary);
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .btn-contact:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+        }
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .github-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        .github-link:hover { color: var(--accent); }
+        .github-link i { font-size: 1rem; }
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .mobile-menu-btn { display: block; }
+            .hero-stats { gap: 1.5rem; }
+            .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+            .about-highlights { grid-template-columns: 1fr; }
+            .projects-grid { grid-template-columns: 1fr; }
+            .comparison-grid { grid-template-columns: 1fr; }
+            .timeline::before { left: 14px; }
+            .timeline-item { padding-left: 50px; }
+            .timeline-dot { left: 5px; width: 18px; height: 18px; }
+            .contact-grid { flex-direction: column; align-items: center; }
+            .contact-item { width: 100%; max-width: 300px; justify-content: center; }
+            .tech-stack-bar { gap: 0.4rem; }
+            .tech-pill { font-size: 0.75rem; padding: 0.25rem 0.6rem; }
+        }
+        a:focus-visible,
+        button:focus-visible,
+        input:focus-visible,
+        textarea:focus-visible {
+            outline: 3px solid var(--accent);
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+        .btn:focus-visible {
+            outline: 3px solid var(--accent);
+            outline-offset: 3px;
+        }
+        .nav-links a:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 4px;
+        }
+        .project-card:focus-visible {
+            outline: 3px solid var(--accent);
+            outline-offset: 4px;
+        }
+        .skill-card:focus-visible {
+            outline: 3px solid var(--accent);
+            outline-offset: 2px;
+        }
+        .timeline-card:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--primary);
+            color: white;
+            padding: 8px 16px;
+            z-index: 100;
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 0 0 8px 0;
+            transition: top 0.3s;
+        }
+        .skip-link:focus { top: 0; }
+        @media print {
+            .navbar, .scroll-indicator, .hero-actions, .btn-contact, .mobile-menu-btn { display: none !important; }
+            .hero { min-height: auto; padding: 2rem; }
+            .project-detail { max-height: none !important; }
+            body { background: white; color: black; }
+            .project-card, .timeline-card, .skill-card, .achievement-card, .edu-card, .highlight-item, .about-card { 
+                break-inside: avoid; 
+                box-shadow: none !important;
+                border: 1px solid #ddd !important;
+            }
+            .contact-section { background: white !important; color: black !important; }
+            .contact-section::before { display: none; }
+            .contact-item { background: #f5f5f5 !important; color: black !important; }
+            a { text-decoration: none; color: var(--primary) !important; }
+            .skill-fill { width: var(--width) !important; }
+        }
+    </style>
+</head>
+<body>
+    <a href="#about" class="skip-link">Skip to main content</a>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="nav-logo">
+                <i class="fas fa-brain"></i>
+                AAA
+            </a>
+            <ul class="nav-links">
+                <li><a href="#about" class="active">About</a></li>
+                <li><a href="#skills">Skills</a></li>
+                <li><a href="#experience">Experience</a></li>
+                <li><a href="#engineering">Engineering</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#achievements">Achievements</a></li>
+                <li><a href="#education">Education</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="https://github.com/elninoahmad" target="_blank" rel="noopener noreferrer" class="btn-nav" style="background: var(--text); margin-right: 0.5rem;">
+                    <i class="fab fa-github"></i> GitHub
+                </a>
+                <a href="#contact" class="btn-nav">Hire Me</a>
+                <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Toggle navigation menu" aria-expanded="false">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-grid"></div>
+        <div class="hero-content">
+            <div class="hero-badge">
+                <i class="fas fa-circle-check"></i>
+                Available for Remote Work
+            </div>
+            <h1>Abdullahi Ahmad <span class="highlight">Aminu</span></h1>
+            <p class="hero-subtitle">Polyglot AI Engineer &middot; Production Eval Harnesses &middot; Agentic Systems &middot; RLHF Infrastructure</p>
+            <p class="hero-tagline">Building production-grade evaluation infrastructure, agentic systems, and RLHF pipelines across Python, Go, Rust, and TypeScript. 5+ years architecting quality frameworks for frontier AI models. M.S. Data Science (USF) &middot; B.Sc. Statistics (Columbia).</p>
+
+            <div class="tech-stack-bar">
+                <span class="tech-pill"><i class="fab fa-python" style="color: var(--python)"></i> Python</span>
+                <span class="tech-pill"><i class="fas fa-code" style="color: var(--go)"></i> Go</span>
+                <span class="tech-pill"><i class="fas fa-gear" style="color: var(--rust)"></i> Rust</span>
+                <span class="tech-pill"><i class="fab fa-js" style="color: var(--ts)"></i> TypeScript</span>
+                <span class="tech-pill"><i class="fas fa-database"></i> SQL</span>
+                <span class="tech-pill"><i class="fas fa-robot"></i> AutoGen</span>
+                <span class="tech-pill"><i class="fas fa-network-wired"></i> MCP</span>
+                <span class="tech-pill"><i class="fas fa-cloud"></i> FastAPI</span>
+                <span class="tech-pill"><i class="fas fa-brain"></i> LangChain</span>
+            </div>
+
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-number">5+</div>
+                    <div class="stat-label">Years Experience</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">9+</div>
+                    <div class="stat-label">Engineering Projects</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">10K+</div>
+                    <div class="stat-label">Responses Evaluated</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">90%+</div>
+                    <div class="stat-label">Accuracy Rate</div>
+                </div>
+            </div>
+            <div class="hero-actions">
+                <a href="#engineering" class="btn btn-primary">
+                    <i class="fas fa-rocket"></i>
+                    View Engineering Work
+                </a>
+                <a href="mailto:elninodollar@gmail.com" class="btn btn-secondary">
+                    <i class="fas fa-envelope"></i>
+                    Get in Touch
+                </a>
+                <a href="Abdullahi_Ahmad_Aminu_Resume.pdf" download class="btn btn-secondary">
+                    <i class="fas fa-file-pdf"></i>
+                    Download CV
+                </a>
+            </div>
+            <div class="hero-contact-bar">
+                <a href="mailto:elninodollar@gmail.com" class="hero-contact-item">
+                    <i class="fas fa-envelope"></i>
+                    elninodollar@gmail.com
+                </a>
+                <a href="tel:+2348135456661" class="hero-contact-item">
+                    <i class="fas fa-phone"></i>
+                    +234 813 545 6661
+                </a>
+                <span class="hero-contact-item">
+                    <i class="fas fa-location-dot"></i>
+                    Abuja, FCT, Nigeria
+                </span>
+                <a href="https://github.com/elninoahmad" target="_blank" rel="noopener noreferrer" class="hero-contact-item">
+                    <i class="fab fa-github"></i>
+                    GitHub
+                </a>
+                <a href="https://www.linkedin.com/in/elnino-dollar-2420103b0/" target="_blank" rel="noopener noreferrer" class="hero-contact-item">
+                    <i class="fab fa-linkedin"></i>
+                    LinkedIn
+                </a>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </section>
+
+    <section id="about">
+        <div class="section-header fade-in">
+            <span class="section-label">About Me</span>
+            <h2 class="section-title">Who I Am</h2>
+            <p class="section-desc">Bridging AI systems engineering, evaluation infrastructure, and technical communication with precision and clarity.</p>
+        </div>
+        <div class="about-grid fade-in">
+            <div class="about-visual">
+                <div class="about-card">
+                    <div class="about-avatar">AA</div>
+                    <h3>Abdullahi Ahmad Aminu</h3>
+                    <p class="role">Polyglot AI Engineer</p>
+                    <div class="location">
+                        <i class="fas fa-location-dot"></i>
+                        Abuja, FCT, Nigeria
+                    </div>
+                    <div class="about-languages">
+                        <span class="lang-tag">English &mdash; Native</span>
+                        <span class="lang-tag">Hausa/Fulani &mdash; Fluent</span>
+                        <span class="lang-tag">Arabic &mdash; Advanced</span>
+                    </div>
+                    <div style="margin-top: 1rem; color: var(--text-muted); font-size: 0.85rem;">
+                        <i class="fas fa-flag" style="margin-right: 0.3rem;"></i> Nigerian
+                    </div>
+                    <div style="margin-top: 0.75rem; color: var(--text-muted); font-size: 0.8rem; line-height: 1.5;">
+                        <i class="fas fa-heart" style="margin-right: 0.3rem; color: var(--accent);"></i>
+                        Interests: Agentic AI, systems architecture, sustainable development, AI ethics, regional integration
+                    </div>
+                </div>
+            </div>
+            <div class="about-text">
+                <p>I am a <strong>Polyglot AI Engineer</strong> with 5+ years architecting production-grade evaluation harnesses, RLHF/SFT workflows, and agentic systems for frontier AI models. I work across <strong>Python, Go, Rust, and TypeScript</strong> &mdash; building the infrastructure that powers model training, not just evaluating its outputs.</p>
+                <p>My expertise spans the full stack of AI systems: from <strong>offline evaluation infrastructure</strong> and <strong>automated benchmarking pipelines</strong> to <strong>multi-agent orchestration frameworks</strong> with tool-calling loops and <strong>Model Context Protocol (MCP)</strong> integrations. I have designed 12-criterion weighted scoring rubrics, built concurrent evaluation pipelines in Go, and deployed RAG systems with hybrid search that improved retrieval precision by 28%.</p>
+                <p>With an <strong>M.S. in Data Science from the University of San Francisco</strong> and a <strong>B.Sc. in Statistics from Columbia University</strong>, I bring rigorous analytical thinking to systems design. I have triple domain expertise: <strong>AI systems engineering</strong> (eval harnesses, agentic runtimes, RAG), <strong>energy policy compliance and econometric analysis</strong>, and <strong>technical documentation at scale</strong>.</p>
+                <div class="about-highlights">
+                    <div class="highlight-item">
+                        <div class="highlight-icon"><i class="fas fa-microchip"></i></div>
+                        <div>
+                            <h4>Agent Architecture</h4>
+                            <p>Multi-agent orchestration, tool-calling loops, MCP, memory primitives</p>
+                        </div>
+                    </div>
+                    <div class="highlight-item">
+                        <div class="highlight-icon"><i class="fas fa-code"></i></div>
+                        <div>
+                            <h4>Polyglot Engineering</h4>
+                            <p>Python, Go, Rust, TypeScript for production AI infrastructure</p>
+                        </div>
+                    </div>
+                    <div class="highlight-item">
+                        <div class="highlight-icon"><i class="fas fa-server"></i></div>
+                        <div>
+                            <h4>Production Systems</h4>
+                            <p>CI/CD eval harnesses, monitoring dashboards, automated regression testing</p>
+                        </div>
+                    </div>
+                    <div class="highlight-item">
+                        <div class="highlight-icon"><i class="fas fa-clipboard-check"></i></div>
+                        <div>
+                            <h4>Rubric Precision</h4>
+                            <p>12-criterion scoring, inter-rater agreement optimization, quality frameworks</p>
+                        </div>
+                    </div>
+                    <div class="highlight-item">
+                        <div class="highlight-icon"><i class="fas fa-shield-halved"></i></div>
+                        <div>
+                            <h4>Trust &amp; Safety</h4>
+                            <p>LLM red-teaming, hallucination detection, content moderation at scale</p>
+                        </div>
+                    </div>
+                    <div class="highlight-item">
+                        <div class="highlight-icon"><i class="fas fa-pen-nib"></i></div>
+                        <div>
+                            <h4>Technical Writing</h4>
+                            <p>Evaluation SOPs, knowledge bases, executive reporting, developer docs</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="skills">
+        <div class="section-header fade-in">
+            <span class="section-label">Core Competencies</span>
+            <h2 class="section-title">What I Build &amp; Evaluate</h2>
+            <p class="section-desc">A comprehensive engineering and evaluation skill set honed through production systems and frontier AI work.</p>
+        </div>
+        <div class="skills-grid">
+            <div class="skill-card fade-in">
+                <div class="skill-header">
+                    <span class="skill-name"><i class="fas fa-robot"></i> Agentic Systems &amp; MCP</span>
+                    <span class="skill-level">95%</span>
+                </div>
+                <div class="skill-bar"><div class="skill-fill" style="--width: 95%"></div></div>
+                <p class="skill-desc">Multi-agent orchestration (AutoGen, CrewAI), tool-calling loops, Model Context Protocol (MCP), memory/retrieval/state-passing primitives, cloud-agents runtime.</p>
+            </div>
+            <div class="skill-card fade-in">
+                <div class="skill-header">
+                    <span class="skill-name"><i class="fas fa-flask"></i> Production Eval Harnesses</span>
+                    <span class="skill-level">97%</span>
+                </div>
+                <div class="skill-bar"><div class="skill-fill" style="--width: 97%"></div></div>
+                <p class="skill-desc">Offline/online evaluation infrastructure, automated benchmarking, CI/CD integration for model regression testing, concurrent pipelines in Go and Python.</p>
+            </div>
+            <div class="skill-card fade-in">
+                <div class="skill-header">
+                    <span class="skill-name"><i class="fas fa-brain"></i> AI / LLM Evaluation &amp; RLHF</span>
+                    <span class="skill-level">98%</span>
+                </div>
+                <div class="skill-bar"><div class="skill-fill" style="--width: 98%"></div></div>
+                <p class="skill-desc">Rubric design, response ranking, preference data creation, model reasoning validation, SFT dataset development, hallucination detection, red-teaming.</p>
+            </div>
+            <div class="skill-card fade-in">
+                <div class="skill-header">
+                    <span class="skill-name"><i class="fas fa-code-branch"></i> RAG &amp; Vector Systems</span>
+                    <span class="skill-level">92%</span>
+                </div>
+                <div class="skill-bar"><div class="skill-fill" style="--width: 92%"></div></div>
+                <p class="skill-desc">LangChain pipelines, ChromaDB, FAISS, hybrid search (dense + BM25), chunking strategies, metadata filtering, retrieval optimization.</p>
+            </div>
+            <div class="skill-card fade-in">
+                <div class="skill-header">
+                    <span class="skill-name"><i class="fab fa-python"></i> Python &amp; AI Frameworks</span>
+                    <span class="skill-level">96%</span>
+                </div>
+                <div class="skill-bar"><div class="skill-fill" style="--width: 96%"></div></div>
+                <p class="skill-desc">LangChain, AutoGen, CrewAI, FastAPI, Streamlit, Plotly, pandas, OpenAI/Anthropic APIs, prompt engineering, concurrent processing.</p>
+            </div>
+            <div class="skill-card fade-in">
+                <div class="skill-header">
+                    <span class="skill-name"><i class="fas fa-code"></i> Go &amp; Systems Programming</span>
+                    <span class="skill-level">88%</span>
+                </div>
+                <div class="skill-bar"><div class="skill-fill" style="--width: 88%"></div></div>
+                <p class="skill-desc">Concurrent evaluation pipelines, high-performance benchmarking harnesses, lightweight runtimes, API gateways, Redis integrations.</p>
+            </div>
+            <div class="skill-card fade-in">
+                <div class="skill-header">
+                    <span class="skill-name"><i class="fas fa-gear"></i> Rust &amp; Low-Level Systems</span>
+                    <span class="skill-level">82%</span>
+                </div>
+                <div class="skill-bar"><div class="skill-fill" style="--width: 82%"></div></div>
+                <p class="skill-desc">Lightweight agent runtimes, memory-safe system components, performance-critical evaluation primitives, CLI tooling.</p>
+            </div>
+            <div class="skill-card fade-in">
+                <div class="skill-header">
+                    <span class="skill-name"><i class="fab fa-js"></i> TypeScript &amp; Full-Stack</span>
+                    <span class="skill-level">85%</span>
+                </div>
+                <div class="skill-bar"><div class="skill-fill" style="--width: 85%"></div></div>
+                <p class="skill-desc">React, REST APIs, AI-native application development, LLM API integration, frontend dashboards, developer tooling interfaces.</p>
+            </div>
+            <div class="skill-card fade-in">
+                <div class="skill-header">
+                    <span class="skill-name"><i class="fas fa-pen-fancy"></i> Technical Writing &amp; Documentation</span>
+                    <span class="skill-level">95%</span>
+                </div>
+                <div class="skill-bar"><div class="skill-fill" style="--width: 95%"></div></div>
+                <p class="skill-desc">Evaluation SOPs, test-outcome reports, prompt engineering docs, knowledge base curation, executive reporting, developer documentation.</p>
+            </div>
+            <div class="skill-card fade-in">
+                <div class="skill-header">
+                    <span class="skill-name"><i class="fas fa-database"></i> Data Science &amp; Statistics</span>
+                    <span class="skill-level">94%</span>
+                </div>
+                <div class="skill-bar"><div class="skill-fill" style="--width: 94%"></div></div>
+                <p class="skill-desc">Python, SQL, R, regression modeling, anomaly detection, A/B testing, econometrics, statistical analysis, experiment design.</p>
+            </div>
+            <div class="skill-card fade-in">
+                <div class="skill-header">
+                    <span class="skill-name"><i class="fas fa-server"></i> MLOps &amp; DevOps</span>
+                    <span class="skill-level">87%</span>
+                </div>
+                <div class="skill-bar"><div class="skill-fill" style="--width: 87%"></div></div>
+                <p class="skill-desc">GitHub Actions CI/CD, Prometheus monitoring, Docker, Redis, FastAPI deployment, automated regression testing, metric dashboards.</p>
+            </div>
+            <div class="skill-card fade-in">
+                <div class="skill-header">
+                    <span class="skill-name"><i class="fas fa-shield-halved"></i> Trust &amp; Safety Review</span>
+                    <span class="skill-level">95%</span>
+                </div>
+                <div class="skill-bar"><div class="skill-fill" style="--width: 95%"></div></div>
+                <p class="skill-desc">LLM red-teaming, harmful content detection, policy enforcement, bias assessment, safety benchmarking, content moderation at scale.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="experience">
+        <div class="section-header fade-in">
+            <span class="section-label">Professional Experience</span>
+            <h2 class="section-title">Career Journey</h2>
+            <p class="section-desc">A track record of building systems and driving quality across AI evaluation platforms and policy analysis.</p>
+        </div>
+        <div class="timeline">
+            <div class="timeline-item fade-in">
+                <div class="timeline-dot"></div>
+                <div class="timeline-card">
+                    <div class="timeline-header">
+                        <div>
+                            <div class="timeline-title">Generalist Expert &mdash; AI Training Data (SFT &amp; RLHF)</div>
+                            <div class="timeline-company">Mercor &mdash; Remote, Contract</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div class="timeline-meta"><i class="fas fa-calendar"></i> May 2026 &ndash; July 2026</div>
+                        </div>
+                    </div>
+                    <div class="timeline-desc">
+                        <ul>
+                            <li>Authored and evaluated <strong>500+ base prompts</strong> across generalist topics for a frontier AI research partner, maintaining <strong>90%+ accuracy</strong> in a high-volume, batch-based task queue.</li>
+                            <li>Ranked AI-generated responses for RLHF preference data, judging clarity, factual accuracy, and reasoning quality; flagged recurring model failure patterns to inform benchmarking cycles.</li>
+                            <li>Built iterative prompt-response test matrices (varying length, style, and system prompts) to isolate model behavior and document output sensitivity in structured evaluation reports.</li>
+                            <li>Designed and deployed a <strong>12-criterion weighted scoring rubric</strong> for prompt-response quality, reducing inter-rater disagreement from <strong>35% to 8%</strong> and accelerating batch turnaround by <strong>25%</strong>.</li>
+                            <li>Leveraged frontier AI coding agents (Cursor, Claude Code) to accelerate prompt-response test matrix generation, automating repetitive evaluation workflows and reducing manual effort by <strong>30%</strong>.</li>
+                            <li>Crafted realistic developer prompts across code review, debugging, and error diagnosis to probe model reasoning across diverse software engineering contexts.</li>
+                            <li>Authored a living internal evaluation-guidelines wiki with annotated examples and decision trees, reducing new-evaluator error rates by <strong>40%</strong> and becoming the team's default onboarding resource.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="timeline-item fade-in">
+                <div class="timeline-dot"></div>
+                <div class="timeline-card">
+                    <div class="timeline-header">
+                        <div>
+                            <div class="timeline-title">AI Data Quality Evaluator</div>
+                            <div class="timeline-company">Apple Baseline &mdash; Remote, Independent Contractor</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <span class="timeline-badge"><i class="fas fa-star"></i> Current</span>
+                            <div class="timeline-meta"><i class="fas fa-calendar"></i> 2025 &ndash; Present</div>
+                        </div>
+                    </div>
+                    <div class="timeline-desc">
+                        <ul>
+                            <li>Evaluate AI-generated search relevance and music recommendation outputs against evolving guidelines, holding a <strong>90%+ accuracy rate</strong> across weekly quality audits with tight turnaround windows.</li>
+                            <li>Apply statistical thinking to identify failure-pattern clusters in model outputs, feeding insights into harder evaluation task design for the research team.</li>
+                            <li>Built a <strong>PowerShell automation script</strong> to reformat evaluation logs into standardized CSV summaries, cutting manual reporting time by <strong>60%</strong> and reducing transcription errors.</li>
+                            <li>Automated reporting workflows using <strong>PowerShell and Python scripts</strong> to standardize evaluation outputs, reducing manual documentation time and improving consistency across batches.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="timeline-item fade-in">
+                <div class="timeline-dot"></div>
+                <div class="timeline-card">
+                    <div class="timeline-header">
+                        <div>
+                            <div class="timeline-title">Data &amp; Compliance Analyst</div>
+                            <div class="timeline-company">OPEC-Adjacent Program &mdash; Remote, Part-time</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div class="timeline-meta"><i class="fas fa-calendar"></i> June 2024 &ndash; November 2025</div>
+                        </div>
+                    </div>
+                    <div class="timeline-desc">
+                        <ul>
+                            <li>Built <strong>regression models</strong> to monitor production-agreement compliance and flag statistical outliers for high-level policy discussions, ensuring data integrity before executive reporting.</li>
+                            <li>Authored <strong>15+ executive-level slide decks</strong> and technical reports in Google Slides/PowerPoint, translating complex econometric findings into clear narratives for senior stakeholders and policy advisors.</li>
+                            <li>Automated the monthly compliance-reporting data pipeline (Excel, PowerShell, Python), cutting report generation time from <strong>8+ hours to 90 minutes (-81%)</strong> and eliminating recurring formatting errors.</li>
+                            <li>Maintained shared data repositories with version control protocols, reducing dataset retrieval time and preserving historical data accessibility for cross-functional teams.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="timeline-item fade-in">
+                <div class="timeline-dot"></div>
+                <div class="timeline-card">
+                    <div class="timeline-header">
+                        <div>
+                            <div class="timeline-title">AI Response Evaluator</div>
+                            <div class="timeline-company">CrowdGen by Appen &mdash; Remote</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div class="timeline-meta"><i class="fas fa-calendar"></i> 2021 &ndash; 2024</div>
+                        </div>
+                    </div>
+                    <div class="timeline-desc">
+                        <ul>
+                            <li>Rated <strong>10,000+ AI-generated responses</strong> against detailed task guidelines across accuracy, relevance, and tone dimensions, maintaining strong accuracy records through weekly quality audits.</li>
+                            <li>Self-managed scheduling across multiple high-volume annotation queues, hitting <strong>100% of deadlines</strong> with no direct oversight.</li>
+                            <li>Wrote concise, structured evaluation feedback that platform managers adopted as examples for onboarding new evaluators.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="timeline-item fade-in">
+                <div class="timeline-dot"></div>
+                <div class="timeline-card">
+                    <div class="timeline-header">
+                        <div>
+                            <div class="timeline-title">AI Evaluator &amp; Technical Writer</div>
+                            <div class="timeline-company">Outlier &mdash; Remote, Contract</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div class="timeline-meta"><i class="fas fa-calendar"></i> 2021 &ndash; March 2026</div>
+                        </div>
+                    </div>
+                    <div class="timeline-desc">
+                        <ul>
+                            <li>Evaluated AI-generated responses against detailed task guidelines with consistent quality standards, rating outputs for accuracy, clarity, relevance, tone, and safety.</li>
+                            <li>Wrote and edited technical explanations and documentation for diverse audiences, translating complex model behavior into clear, actionable feedback.</li>
+                            <li>Maintained high accuracy standards across continuous evaluation work, adapting quickly to evolving rubrics and platform requirements.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="engineering">
+        <div class="section-header fade-in">
+            <span class="section-label">Engineering Projects</span>
+            <h2 class="section-title">Systems I Have Built</h2>
+            <p class="section-desc">Production-grade infrastructure, agentic systems, and evaluation harnesses across Python, Go, Rust, and TypeScript.</p>
+        </div>
+        <div class="projects-grid">
+
+            <div class="project-card fade-in" onclick="toggleProject(this)">
+                <div class="project-header">
+                    <span class="project-number">01</span>
+                    <div class="project-tags">
+                        <span class="project-tag go">Go</span>
+                        <span class="project-tag python">Python</span>
+                        <span class="project-tag accent">Eval Harness</span>
+                    </div>
+                </div>
+                <div class="project-body">
+                    <h3 class="project-title">LLM Response Evaluation Harness</h3>
+                    <p class="project-desc">Designed an offline evaluation framework benchmarking GPT-4, Claude 3.5, and Gemini across 200+ prompts with automated grading for accuracy, reasoning, and hallucination detection. Built concurrent processing pipelines in Go.</p>
+                    <div class="project-preview">
+                        <div class="preview-label">Key Metrics</div>
+                        <table class="preview-table">
+                            <tr><th>Metric</th><th>Value</th></tr>
+                            <tr><td>Models Benchmarked</td><td>GPT-4, Claude 3.5, Gemini</td></tr>
+                            <tr><td>Prompts Evaluated</td><td>200+</td></tr>
+                            <tr><td>Grading Dimensions</td><td>Accuracy, Reasoning, Hallucination</td></tr>
+                            <tr><td>Concurrency</td><td>Go goroutines</td></tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="project-footer">
+                    <span class="project-expand">View Details <i class="fas fa-arrow-right"></i></span>
+                    <a href="https://github.com/elninoahmad" target="_blank" rel="noopener noreferrer" class="github-link"><i class="fab fa-github"></i> Repo</a>
+                </div>
+                <div class="project-detail">
+                    <div class="project-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">Architecture</div>
+                            <p class="detail-text">Built a modular evaluation harness with pluggable graders, concurrent request dispatch via Go channels, and structured JSON output for downstream analysis. Python handles prompt generation and rubric application; Go manages high-throughput API calling and result aggregation.</p>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Tech Stack</div>
+                            <p class="detail-text"><strong>Go</strong> (concurrent pipelines, HTTP clients), <strong>Python</strong> (OpenAI/Anthropic APIs, pandas, grading logic), <strong>JSON</strong> (structured output), <strong>GitHub Actions</strong> (automated runs).</p>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Outcome</div>
+                            <p class="detail-text">Enabled systematic comparison of frontier models across custom criteria, identifying consistent failure patterns in reasoning chains and hallucination triggers that informed retraining priorities.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card fade-in" onclick="toggleProject(this)">
+                <div class="project-header">
+                    <span class="project-number">02</span>
+                    <div class="project-tags">
+                        <span class="project-tag rust">Rust</span>
+                        <span class="project-tag python">Python</span>
+                        <span class="project-tag accent">Agentic</span>
+                    </div>
+                </div>
+                <div class="project-body">
+                    <h3 class="project-title">Agentic Research Assistant</h3>
+                    <p class="project-desc">Developed an agentic system with tool-calling loops using AutoGen for multi-step research and summarization. Implemented state-passing primitives and memory management. Built a lightweight runtime in Rust.</p>
+                    <div class="project-preview">
+                        <div class="preview-label">Key Metrics</div>
+                        <table class="preview-table">
+                            <tr><th>Metric</th><th>Value</th></tr>
+                            <tr><td>Framework</td><td>AutoGen (Python)</td></tr>
+                            <tr><td>Runtime</td><td>Custom Rust</td></tr>
+                            <tr><td>Pattern</td><td>Tool-calling loops</td></tr>
+                            <tr><td>Memory</td><td>State-passing primitives</td></tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="project-footer">
+                    <span class="project-expand">View Details <i class="fas fa-arrow-right"></i></span>
+                    <a href="https://github.com/elninoahmad" target="_blank" rel="noopener noreferrer" class="github-link"><i class="fab fa-github"></i> Repo</a>
+                </div>
+                <div class="project-detail">
+                    <div class="project-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">Architecture</div>
+                            <p class="detail-text">Python layer orchestrates AutoGen agents with tool-calling loops for web search, summarization, and citation extraction. Rust runtime handles low-latency state persistence, memory management, and inter-agent message passing via channels.</p>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Tech Stack</div>
+                            <p class="detail-text"><strong>Python</strong> (AutoGen, OpenAI API), <strong>Rust</strong> (tokio, serde, custom runtime), <strong>REST APIs</strong> (tool integrations), <strong>JSON</strong> (state serialization).</p>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Outcome</div>
+                            <p class="detail-text">Demonstrated that a hybrid Python/Rust architecture can achieve sub-100ms agent response times while maintaining full conversation state across multi-turn research workflows.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card fade-in" onclick="toggleProject(this)">
+                <div class="project-header">
+                    <span class="project-number">03</span>
+                    <div class="project-tags">
+                        <span class="project-tag python">Python</span>
+                        <span class="project-tag accent">Orchestration</span>
+                    </div>
+                </div>
+                <div class="project-body">
+                    <h3 class="project-title">Multi-Agent Orchestration System</h3>
+                    <p class="project-desc">Designed an orchestration framework coordinating researcher, writer, reviewer, and fact-checker agents with tool-calling loops and dynamic task routing. Reduced task completion time by 35%.</p>
+                    <div class="project-preview">
+                        <div class="preview-label">Key Metrics</div>
+                        <table class="preview-table">
+                            <tr><th>Metric</th><th>Value</th></tr>
+                            <tr><td>Agents</td><td>Researcher, Writer, Reviewer, Fact-Checker</td></tr>
+                            <tr><td>Frameworks</td><td>AutoGen, CrewAI, FastAPI</td></tr>
+                            <tr><td>Backend</td><td>Redis (task queue)</td></tr>
+                            <tr><td>Improvement</td><td>35% faster completion</td></tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="project-footer">
+                    <span class="project-expand">View Details <i class="fas fa-arrow-right"></i></span>
+                    <a href="https://github.com/elninoahmad" target="_blank" rel="noopener noreferrer" class="github-link"><i class="fab fa-github"></i> Repo</a>
+                </div>
+                <div class="project-detail">
+                    <div class="project-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">Architecture</div>
+                            <p class="detail-text">FastAPI serves as the orchestration gateway. Redis maintains task queues and agent state. AutoGen handles agent conversation flows; CrewAI manages role-based task delegation. Dynamic routing sends tasks to the optimal agent based on content type and workload.</p>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Tech Stack</div>
+                            <p class="detail-text"><strong>Python</strong> (AutoGen, CrewAI, FastAPI), <strong>Redis</strong> (caching, queues), <strong>REST APIs</strong>, <strong>Docker</strong> (containerization).</p>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Outcome</div>
+                            <p class="detail-text">Reduced end-to-end task completion time by 35% through parallel agent execution and intelligent routing. System handles 4-agent workflows with automatic fallback and retry logic.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card fade-in" onclick="toggleProject(this)">
+                <div class="project-header">
+                    <span class="project-number">04</span>
+                    <div class="project-tags">
+                        <span class="project-tag python">Python</span>
+                        <span class="project-tag accent">CI/CD</span>
+                    </div>
+                </div>
+                <div class="project-body">
+                    <h3 class="project-title">Evaluation Harness with CI/CD Integration</h3>
+                    <p class="project-desc">Built an end-to-end evaluation harness with offline/online testing modes, integrated into GitHub Actions CI/CD for automated regression testing on model updates. Cut manual evaluation time by 80%.</p>
+                    <div class="project-preview">
+                        <div class="preview-label">Key Metrics</div>
+                        <table class="preview-table">
+                            <tr><th>Metric</th><th>Value</th></tr>
+                            <tr><td>Testing Modes</td><td>Offline &amp; Online</td></tr>
+                            <tr><td>CI/CD</td><td>GitHub Actions</td></tr>
+                            <tr><td>Monitoring</td><td>Prometheus</td></tr>
+                            <tr><td>Time Saved</td><td>80% reduction</td></tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="project-footer">
+                    <span class="project-expand">View Details <i class="fas fa-arrow-right"></i></span>
+                    <a href="https://github.com/elninoahmad" target="_blank" rel="noopener noreferrer" class="github-link"><i class="fab fa-github"></i> Repo</a>
+                </div>
+                <div class="project-detail">
+                    <div class="project-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">Architecture</div>
+                            <p class="detail-text">GitHub Actions triggers evaluation runs on every model update. Offline mode runs against frozen test sets; online mode evaluates live model responses. Prometheus collects latency, accuracy, and drift metrics. Results are posted back to PRs as structured reports.</p>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Tech Stack</div>
+                            <p class="detail-text"><strong>Python</strong> (pytest, evaluation logic), <strong>GitHub Actions</strong> (CI/CD), <strong>Prometheus</strong> (metrics), <strong>Docker</strong> (reproducible environments).</p>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Outcome</div>
+                            <p class="detail-text">Eliminated 80% of manual evaluation work by automating regression detection. Teams catch performance degradation within minutes of model deployment rather than days.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card fade-in" onclick="toggleProject(this)">
+                <div class="project-header">
+                    <span class="project-number">05</span>
+                    <div class="project-tags">
+                        <span class="project-tag python">Python</span>
+                        <span class="project-tag accent">Gateway</span>
+                    </div>
+                </div>
+                <div class="project-body">
+                    <h3 class="project-title">Intelligent LLM Router &amp; Model Gateway</h3>
+                    <p class="project-desc">Developed a semantic routing gateway dynamically directing queries to the optimal model (GPT-4, Claude 3.5, Gemini) based on cost, latency, and performance. Reduced inference cost by 42%.</p>
+                    <div class="project-preview">
+                        <div class="preview-label">Key Metrics</div>
+                        <table class="preview-table">
+                            <tr><th>Metric</th><th>Value</th></tr>
+                            <tr><td>Models</td><td>GPT-4, Claude 3.5, Gemini</td></tr>
+                            <tr><td>Routing Logic</td><td>Cost, Latency, Performance</td></tr>
+                            <tr><td>Backend</td><td>FastAPI + Redis</td></tr>
+                            <tr><td>Cost Reduction</td><td>42%</td></tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="project-footer">
+                    <span class="project-expand">View Details <i class="fas fa-arrow-right"></i></span>
+                    <a href="https://github.com/elninoahmad" target="_blank" rel="noopener noreferrer" class="github-link"><i class="fab fa-github"></i> Repo</a>
+                </div>
+                <div class="project-detail">
+                    <div class="project-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">Architecture</div>
+                            <p class="detail-text">FastAPI gateway receives incoming queries, classifies intent and complexity via lightweight embeddings, then routes to the most cost-effective model that meets quality thresholds. Redis caches routing decisions and model performance history.</p>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Tech Stack</div>
+                            <p class="detail-text"><strong>Python</strong> (FastAPI, sentence-transformers), <strong>Redis</strong> (caching, performance tracking), <strong>OpenAI/Anthropic APIs</strong>, <strong>Docker</strong>.</p>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Outcome</div>
+                            <p class="detail-text">Achieved 42% inference cost reduction with <2% accuracy degradation by routing simple queries to cheaper models and reserving frontier models for complex reasoning tasks.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card fade-in" onclick="toggleProject(this)">
+                <div class="project-header">
+                    <span class="project-number">06</span>
+                    <div class="project-tags">
+                        <span class="project-tag python">Python</span>
+                        <span class="project-tag accent">RAG</span>
+                    </div>
+                </div>
+                <div class="project-body">
+                    <h3 class="project-title">Custom RAG System with Hybrid Search</h3>
+                    <p class="project-desc">Built a RAG pipeline combining dense vector search (ChromaDB) and sparse keyword search (BM25) for optimal retrieval precision. Improved mean reciprocal rank (MRR) by 28% over vector-only approaches.</p>
+                    <div class="project-preview">
+                        <div class="preview-label">Key Metrics</div>
+                        <table class="preview-table">
+                            <tr><th>Metric</th><th>Value</th></tr>
+                            <tr><td>Dense Search</td><td>ChromaDB (OpenAI embeddings)</td></tr>
+                            <tr><td>Sparse Search</td><td>BM25</td></tr>
+                            <tr><td>MRR Improvement</td><td>+28%</td></tr>
+                            <tr><td>Framework</td><td>LangChain</td></tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="project-footer">
+                    <span class="project-expand">View Details <i class="fas fa-arrow-right"></i></span>
+                    <a href="https://github.com/elninoahmad" target="_blank" rel="noopener noreferrer" class="github-link"><i class="fab fa-github"></i> Repo</a>
+                </div>
+                <div class="project-detail">
+                    <div class="project-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">Architecture</div>
+                            <p class="detail-text">Documents are chunked with overlapping windows, embedded via OpenAI, and stored in ChromaDB. Queries trigger both dense vector search and BM25 keyword search. Results are fused via reciprocal rank fusion (RRF) before being passed to the LLM for generation.</p>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Tech Stack</div>
+                            <p class="detail-text"><strong>Python</strong> (LangChain, ChromaDB, rank-bm25), <strong>OpenAI API</strong> (embeddings), <strong>Streamlit</strong> (demo UI).</p>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Outcome</div>
+                            <p class="detail-text">Hybrid search outperformed vector-only retrieval by 28% MRR on technical documentation datasets, particularly for keyword-heavy queries that dense embeddings miss.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card fade-in" onclick="toggleProject(this)">
+                <div class="project-header">
+                    <span class="project-number">07</span>
+                    <div class="project-tags">
+                        <span class="project-tag python">Python</span>
+                        <span class="project-tag accent">MLOps</span>
+                    </div>
+                </div>
+                <div class="project-body">
+                    <h3 class="project-title">Production ML Monitoring Dashboard</h3>
+                    <p class="project-desc">Designed a real-time monitoring dashboard tracking 15+ KPIs (drift, latency, error rates, fairness) with automated benchmarking pipelines and anomaly detection.</p>
+                    <div class="project-preview">
+                        <div class="preview-label">Key Metrics</div>
+                        <table class="preview-table">
+                            <tr><th>Metric</th><th>Value</th></tr>
+                            <tr><td>KPIs Tracked</td><td>15+</td></tr>
+                            <tr><td>Dashboard</td><td>Streamlit + Plotly</td></tr>
+                            <tr><td>Monitoring</td><td>Prometheus</td></tr>
+                            <tr><td>Detection</td><td>Anomaly detection pipelines</td></tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="project-footer">
+                    <span class="project-expand">View Details <i class="fas fa-arrow-right"></i></span>
+                    <a href="https://github.com/elninoahmad" target="_blank" rel="noopener noreferrer" class="github-link"><i class="fab fa-github"></i> Repo</a>
+                </div>
+                <div class="project-detail">
+                    <div class="project-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">Architecture</div>
+                            <p class="detail-text">Streamlit frontend displays real-time metrics from Prometheus. Automated benchmarking runs hourly against golden datasets. Anomaly detection flags drift in embedding distributions, latency spikes, and fairness metric deviations.</p>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Tech Stack</div>
+                            <p class="detail-text"><strong>Python</strong> (Streamlit, Plotly, scikit-learn), <strong>Prometheus</strong> (metrics collection), <strong>pandas</strong> (data processing).</p>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Outcome</div>
+                            <p class="detail-text">Enabled proactive model maintenance by surfacing performance degradation before user complaints. Reduced mean time to detection (MTTD) from days to minutes.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card fade-in" onclick="toggleProject(this)">
+                <div class="project-header">
+                    <span class="project-number">08</span>
+                    <div class="project-tags">
+                        <span class="project-tag python">Python</span>
+                        <span class="project-tag accent">Optimization</span>
+                    </div>
+                </div>
+                <div class="project-body">
+                    <h3 class="project-title">Automated Prompt Optimization Pipeline</h3>
+                    <p class="project-desc">Developed an end-to-end prompt optimization framework using chain-of-thought and few-shot techniques across multiple models. Achieved 35% improvement in prompt effectiveness across 5 benchmark tasks.</p>
+                    <div class="project-preview">
+                        <div class="preview-label">Key Metrics</div>
+                        <table class="preview-table">
+                            <tr><th>Metric</th><th>Value</th></tr>
+                            <tr><td>Techniques</td><td>Chain-of-Thought, Few-Shot</td></tr>
+                            <tr><td>Models</td><td>Multiple (OpenAI, Anthropic)</td></tr>
+                            <tr><td>Benchmarks</td><td>5 tasks</td></tr>
+                            <tr><td>Improvement</td><td>35% effectiveness gain</td></tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="project-footer">
+                    <span class="project-expand">View Details <i class="fas fa-arrow-right"></i></span>
+                    <a href="https://github.com/elninoahmad" target="_blank" rel="noopener noreferrer" class="github-link"><i class="fab fa-github"></i> Repo</a>
+                </div>
+                <div class="project-detail">
+                    <div class="project-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">Architecture</div>
+                            <p class="detail-text">Pipeline generates prompt variants (CoT, few-shot, zero-shot), evaluates each against benchmark tasks, scores via automated graders, and surfaces the optimal prompt configuration per task type. Streamlit UI enables interactive exploration of prompt variants.</p>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Tech Stack</div>
+                            <p class="detail-text"><strong>Python</strong> (OpenAI/Anthropic APIs, pandas), <strong>Streamlit</strong> (UI), <strong>JSON</strong> (prompt templates), <strong>Git</strong> (version control).</p>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Outcome</div>
+                            <p class="detail-text">Systematic prompt optimization replaced guesswork with data-driven selection. 35% average improvement across reasoning, coding, and summarization tasks.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card fade-in" onclick="toggleProject(this)">
+                <div class="project-header">
+                    <span class="project-number">09</span>
+                    <div class="project-tags">
+                        <span class="project-tag python">Python</span>
+                        <span class="project-tag accent">RAG</span>
+                    </div>
+                </div>
+                <div class="project-body">
+                    <h3 class="project-title">RAG-Powered Document Q&amp;A System</h3>
+                    <p class="project-desc">Built a RAG pipeline using LangChain, ChromaDB, and OpenAI embeddings for 500+ documents. Selected ChromaDB over FAISS for metadata filtering and implemented overlapping chunking strategies for optimized retrieval.</p>
+                    <div class="project-preview">
+                        <div class="preview-label">Key Metrics</div>
+                        <table class="preview-table">
+                            <tr><th>Metric</th><th>Value</th></tr>
+                            <tr><td>Documents</td><td>500+</td></tr>
+                            <tr><td>Vector DB</td><td>ChromaDB (metadata filtering)</td></tr>
+                            <tr><td>Chunking</td><td>Overlapping windows</td></tr>
+                            <tr><td>Framework</td><td>LangChain</td></tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="project-footer">
+                    <span class="project-expand">View Details <i class="fas fa-arrow-right"></i></span>
+                    <a href="https://github.com/elninoahmad" target="_blank" rel="noopener noreferrer" class="github-link"><i class="fab fa-github"></i> Repo</a>
+                </div>
+                <div class="project-detail">
+                    <div class="project-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">Architecture</div>
+                            <p class="detail-text">Documents are ingested via LangChain loaders, chunked with overlapping windows (to preserve context across boundaries), embedded via OpenAI, and stored in ChromaDB with metadata tags for source filtering. Query-time retrieval uses semantic search + metadata filters.</p>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Tech Stack</div>
+                            <p class="detail-text"><strong>Python</strong> (LangChain, ChromaDB), <strong>OpenAI API</strong> (embeddings, generation), <strong>Streamlit</strong> (UI).</p>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Outcome</div>
+                            <p class="detail-text">Enabled natural-language querying across 500+ technical documents with source attribution. Overlapping chunking reduced context-loss errors by an estimated 15% compared to non-overlapping approaches.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="projects">
+        <div class="section-header fade-in">
+            <span class="section-label">Evaluation &amp; Documentation Case Studies</span>
+            <h2 class="section-title">Deep-Dive Portfolio Showcase</h2>
+            <p class="section-desc">Detailed case studies demonstrating evaluation frameworks, automation, and documentation excellence.</p>
+        </div>
+        <div class="projects-grid">
+
+            <div class="project-card fade-in" onclick="toggleProject(this)">
+                <div class="project-header">
+                    <span class="project-number">01</span>
+                    <div class="project-tags">
+                        <span class="project-tag accent">Rubric Design</span>
+                        <span class="project-tag">AI Evaluation</span>
+                    </div>
+                </div>
+                <div class="project-body">
+                    <h3 class="project-title">AI Evaluation Rubric Standardization &mdash; Frontier LLM Project</h3>
+                    <p class="project-desc">Designed and deployed a 12-criterion rubric with weighted scoring to reduce inter-rater disagreement from 35% to 8% on a frontier AI research partner's SFT project.</p>
+                    <div class="project-preview">
+                        <div class="preview-label">Rubric Criteria Sample</div>
+                        <table class="preview-table">
+                            <tr><th>Criterion</th><th>Weight</th><th>Focus Area</th></tr>
+                            <tr><td>Factual Accuracy</td><td>25%</td><td>Verifiable claims, no hallucinations</td></tr>
+                            <tr><td>Reasoning Quality</td><td>20%</td><td>Logical flow, sound argumentation</td></tr>
+                            <tr><td>Clarity &amp; Coherence</td><td>15%</td><td>Readable, well-structured output</td></tr>
+                            <tr><td>Completeness</td><td>15%</td><td>Addresses all parts of the prompt</td></tr>
+                            <tr><td>Tone Appropriateness</td><td>10%</td><td>Matches intended audience</td></tr>
+                            <tr><td>Safety &amp; Policy</td><td>15%</td><td>No harmful or biased content</td></tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="project-footer">
+                    <span class="project-expand">View Full Details <i class="fas fa-arrow-right"></i></span>
+                    <span style="color: var(--text-muted); font-size: 0.85rem; font-weight: 700;">35% &rarr; 8% Disagreement</span>
+                </div>
+                <div class="project-detail">
+                    <div class="project-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">Problem</div>
+                            <p class="detail-text">Inconsistent grading across evaluators caused 30% of batches to require re-review, delaying model training timelines.</p>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Role &amp; Stack</div>
+                            <p class="detail-text"><strong>Role:</strong> Lead evaluator and documentation owner; collaborated with 3 senior researchers.<br><strong>Stack:</strong> Markdown, Google Sheets, Python (pandas), Mercor evaluation platform.</p>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Outcome</div>
+                            <p class="detail-text">Designed and deployed a <strong>12-criterion rubric with weighted scoring</strong>; reduced inter-rater disagreement from <strong>35% to 8%</strong> and cut re-review rate significantly, accelerating batch turnaround by an estimated 25%.</p>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Before vs. After Feedback</div>
+                            <div class="comparison-grid">
+                                <div class="comparison-col before">
+                                    <h5>Before</h5>
+                                    <p>"The response seems okay. It answers the question but could be better. Score: 3/5."</p>
+                                </div>
+                                <div class="comparison-col after">
+                                    <h5>After</h5>
+                                    <p>"Accuracy: 5/5 (all claims verifiable). Reasoning: 3/5 (jumps from C to E without D). Completeness: 4/5. Weighted Score: 4.1/5."</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card fade-in" onclick="toggleProject(this)">
+                <div class="project-header">
+                    <span class="project-number">02</span>
+                    <div class="project-tags">
+                        <span class="project-tag accent">Automation</span>
+                        <span class="project-tag">Energy Policy</span>
+                    </div>
+                </div>
+                <div class="project-body">
+                    <h3 class="project-title">Energy Compliance Reporting Automation &mdash; OPEC-Adjacent Program</h3>
+                    <p class="project-desc">Automated a data pipeline that reduced monthly compliance report generation from 8+ hours to 90 minutes, eliminating formatting errors and improving stakeholder confidence.</p>
+                    <div class="project-preview">
+                        <div class="preview-label">Time Savings Breakdown</div>
+                        <table class="preview-table">
+                            <tr><th>Task</th><th>Before</th><th>After</th><th>Savings</th></tr>
+                            <tr><td>Data Extraction</td><td>3 hours</td><td>15 min</td><td><span class="score-badge score-high">-92%</span></td></tr>
+                            <tr><td>Format Standardization</td><td>2 hours</td><td>5 min</td><td><span class="score-badge score-high">-96%</span></td></tr>
+                            <tr><td>Quality Checks</td><td>1.5 hours</td><td>20 min</td><td><span class="score-badge score-high">-78%</span></td></tr>
+                            <tr><td>Executive Formatting</td><td>1.5 hours</td><td>10 min</td><td><span class="score-badge score-high">-89%</span></td></tr>
+                            <tr><td><strong>Total</strong></td><td><strong>8+ hours</strong></td><td><strong>90 min</strong></td><td><span class="score-badge score-high"><strong>-81%</strong></span></td></tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="project-footer">
+                    <span class="project-expand">View Full Details <i class="fas fa-arrow-right"></i></span>
+                    <span style="color: var(--text-muted); font-size: 0.85rem; font-weight: 700;">8+ hrs &rarr; 90 min</span>
+                </div>
+                <div class="project-detail">
+                    <div class="project-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">Problem</div>
+                            <p class="detail-text">Monthly compliance reports required 8+ hours of manual data extraction and formatting, introducing errors and delays.</p>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Role &amp; Stack</div>
+                            <p class="detail-text"><strong>Role:</strong> Sole analyst; reported to PR Coordinator.<br><strong>Stack:</strong> Excel, PowerShell, Python, Google Workspace.</p>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Outcome</div>
+                            <p class="detail-text">Automated data pipeline <strong>reduced report generation from 8+ hours to 90 minutes</strong>; eliminated formatting errors and improved stakeholder confidence in data reliability. Authored 15+ executive-level slide decks and technical reports translating complex econometric findings for senior stakeholders.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card fade-in" onclick="toggleProject(this)">
+                <div class="project-header">
+                    <span class="project-number">03</span>
+                    <div class="project-tags">
+                        <span class="project-tag accent">Documentation</span>
+                        <span class="project-tag">Onboarding</span>
+                    </div>
+                </div>
+                <div class="project-body">
+                    <h3 class="project-title">Technical Documentation &mdash; AI Evaluation Guidelines Wiki</h3>
+                    <p class="project-desc">Created a living internal wiki with annotated examples and decision trees that reduced new-evaluator error rates by 40% and became the team's default onboarding resource.</p>
+                    <div class="project-preview">
+                        <div class="preview-label">Wiki Structure &amp; Impact</div>
+                        <table class="preview-table">
+                            <tr><th>Section</th><th>Content</th><th>Impact</th></tr>
+                            <tr><td>Quick Start Guide</td><td>Platform navigation, first-task walkthrough</td><td><span class="score-badge score-med">Onboarding -30%</span></td></tr>
+                            <tr><td>Decision Trees</td><td>Flowcharts for edge-case handling</td><td><span class="score-badge score-med">Escalations -45%</span></td></tr>
+                            <tr><td>Annotated Examples</td><td>Scored responses with explanations</td><td><span class="score-badge score-high">Error rate -40%</span></td></tr>
+                            <tr><td>Rubric Changelog</td><td>Version history with diff highlights</td><td><span class="score-badge score-med">Confusion -35%</span></td></tr>
+                            <tr><td>FAQ &amp; Troubleshooting</td><td>Common issues and resolutions</td><td><span class="score-badge score-med">Support tickets -50%</span></td></tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="project-footer">
+                    <span class="project-expand">View Full Details <i class="fas fa-arrow-right"></i></span>
+                    <span style="color: var(--text-muted); font-size: 0.85rem; font-weight: 700;">Error Rate -40%</span>
+                </div>
+                <div class="project-detail">
+                    <div class="project-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">Problem</div>
+                            <p class="detail-text">New evaluators struggled with platform-specific guidelines, leading to high error rates in first-week assignments.</p>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Role &amp; Stack</div>
+                            <p class="detail-text"><strong>Role:</strong> Technical writer and knowledge curator.<br><strong>Stack:</strong> Notion, Markdown, Google Docs.</p>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Outcome</div>
+                            <p class="detail-text">Created a living internal wiki with annotated examples and decision trees; <strong>reduced new-evaluator error rates by 40%</strong> and became the team's default onboarding resource.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card fade-in" onclick="toggleProject(this)">
+                <div class="project-header">
+                    <span class="project-number">04</span>
+                    <div class="project-tags">
+                        <span class="project-tag accent">Prompt Engineering</span>
+                        <span class="project-tag">Evaluation</span>
+                    </div>
+                </div>
+                <div class="project-body">
+                    <h3 class="project-title">Prompt-Response Test Matrices &mdash; Frontier LLM Benchmarking</h3>
+                    <p class="project-desc">Built iterative prompt-response test matrices varying length, style, and system prompts to isolate model behavior and document output sensitivity for a frontier AI partner.</p>
+                    <div class="project-preview">
+                        <div class="preview-label">Test Matrix Dimensions</div>
+                        <div class="preview-content">
+                            <strong>Variables Tested:</strong><br>
+                            1. Response Length (short / medium / long)<br>
+                            2. Writing Style (formal / casual / technical)<br>
+                            3. System Prompt Role (expert / assistant / tutor)<br>
+                            4. Temperature Settings (0.3 / 0.7 / 1.0)<br>
+                            5. Output Format (bullet / paragraph / table)
+                        </div>
+                    </div>
+                </div>
+                <div class="project-footer">
+                    <span class="project-expand">View Full Details <i class="fas fa-arrow-right"></i></span>
+                    <span style="color: var(--text-muted); font-size: 0.85rem; font-weight: 700;">500+ Prompts</span>
+                </div>
+                <div class="project-detail">
+                    <div class="project-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">Objective</div>
+                            <p class="detail-text">Isolate how varying prompt parameters affect model output quality and consistency to inform benchmarking and retraining cycles.</p>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Methodology</div>
+                            <p class="detail-text">Created controlled test matrices holding all variables constant except one, then evaluated outputs against the standardized 12-criterion rubric. Documented sensitivity patterns in structured reports for the research team.</p>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Key Finding</div>
+                            <p class="detail-text">Model hallucination rate increased by <strong>3x when system prompts assumed an "expert" persona without grounding instructions</strong>, leading to a new prompt-template requirement adopted by the research team.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card fade-in" onclick="toggleProject(this)">
+                <div class="project-header">
+                    <span class="project-number">05</span>
+                    <div class="project-tags">
+                        <span class="project-tag accent">QA Documentation</span>
+                        <span class="project-tag">Test Planning</span>
+                    </div>
+                </div>
+                <div class="project-body">
+                    <h3 class="project-title">AI Content Testing &amp; QA Documentation Framework</h3>
+                    <p class="project-desc">Developed a comprehensive QA documentation framework for a frontier LLM SFT project, including test plans, test cases, defect tracking templates, and quality metric dashboards.</p>
+                    <div class="project-preview">
+                        <div class="preview-label">Framework Components</div>
+                        <div class="preview-content">
+                            <strong>Documentation Deliverables:</strong><br>
+                            1. Test Plans &amp; Test Cases (systematic coverage matrix)<br>
+                            2. Defect Tracking Log (severity, category, reproduction steps)<br>
+                            3. Quality Metric Dashboard (accuracy, turnaround, inter-rater agreement)<br>
+                            4. Stakeholder Reporting Templates (executive summaries)<br>
+                            5. Validation Framework (pre-release quality gates)
+                        </div>
+                    </div>
+                </div>
+                <div class="project-footer">
+                    <span class="project-expand">View Full Details <i class="fas fa-arrow-right"></i></span>
+                    <span style="color: var(--text-muted); font-size: 0.85rem; font-weight: 700;">5 Components</span>
+                </div>
+                <div class="project-detail">
+                    <div class="project-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">Objective</div>
+                            <p class="detail-text">Create a structured QA documentation framework that ensures consistent testing, clear defect tracking, and transparent quality reporting for AI content evaluation workflows.</p>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Test Plan Structure</div>
+                            <p class="detail-text">Developed test plans covering: (1) Scope &amp; objectives for each batch, (2) Test case inventory with expected vs. actual behavior, (3) Edge case scenarios and failure mode categories, (4) Environment and rubric version specifications, (5) Acceptance criteria and quality gates.</p>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Defect Tracking Template</div>
+                            <table class="error-table">
+                                <tr><th>Field</th><th>Description</th><th>Example</th></tr>
+                                <tr><td>Defect ID</td><td>Unique identifier</td><td>DEF-2026-042</td></tr>
+                                <tr><td>Severity</td><td>Critical / High / Medium / Low</td><td>High</td></tr>
+                                <tr><td>Category</td><td>Hallucination / Tone / Accuracy / Safety</td><td>Hallucination</td></tr>
+                                <tr><td>Reproduction</td><td>Steps to reproduce</td><td>Prompt + system config</td></tr>
+                                <tr><td>Status</td><td>Open / In Review / Resolved</td><td>Resolved</td></tr>
+                            </table>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Outcome</div>
+                            <p class="detail-text">The framework became the standard for QA documentation across the project, enabling faster onboarding of new evaluators, clearer stakeholder communication, and measurable improvement in defect resolution turnaround time.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card fade-in" onclick="toggleProject(this)">
+                <div class="project-header">
+                    <span class="project-number">06</span>
+                    <div class="project-tags">
+                        <span class="project-tag accent">Editing</span>
+                        <span class="project-tag">Proofreading</span>
+                    </div>
+                </div>
+                <div class="project-body">
+                    <h3 class="project-title">Editing &amp; Proofreading Showcase</h3>
+                    <p class="project-desc">Demonstrated ability to identify and correct 8 distinct errors in a formal business communication, including spelling, grammar, punctuation, and article usage.</p>
+                    <div class="project-preview">
+                        <div class="preview-label">Error Summary</div>
+                        <div class="preview-content">
+                            <strong>8 errors identified &amp; corrected:</strong><br>
+                            Article usage &middot; Spelling (4) &middot; Punctuation &middot; Grammar<br>
+                            <span style="color: var(--success); font-weight: 600;">100% detection rate</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="project-footer">
+                    <span class="project-expand">View Full Details <i class="fas fa-arrow-right"></i></span>
+                    <span style="color: var(--text-muted); font-size: 0.85rem; font-weight: 700;">8 Errors Fixed</span>
+                </div>
+                <div class="project-detail">
+                    <div class="project-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">Objective</div>
+                            <p class="detail-text">Demonstrate ability to identify and correct errors in written content with meticulous attention to detail.</p>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Before vs. After</div>
+                            <div class="comparison-grid">
+                                <div class="comparison-col before">
+                                    <h5>Before (Original)</h5>
+                                    <p>&ldquo;This is a important announcement regarding our upcoming meeting. The meeting will be held on Tuesday Febuary 15th at 3pm. Please ensure your avalible to attend. We will discus the new project timeline and address any conserns. Your feedback is valueble and we encourage you to share your thoughts. If you have any questions, dont hesitate to reach out.&rdquo;</p>
+                                </div>
+                                <div class="comparison-col after">
+                                    <h5>After (Corrected)</h5>
+                                    <p>&ldquo;This is an important announcement regarding our upcoming meeting. The meeting will be held on Tuesday, February 15th, at 3:00 PM. Please ensure you are available to attend. We will discuss the new project timeline and address any concerns. Your feedback is valuable, and we encourage you to share your thoughts. If you have any questions, please do not hesitate to reach out.&rdquo;</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Error Tracking</div>
+                            <table class="error-table">
+                                <tr><th>Issue</th><th>Before</th><th>After</th></tr>
+                                <tr><td>Article usage</td><td class="error-before">a important</td><td class="error-after">an important</td></tr>
+                                <tr><td>Spelling</td><td class="error-before">Febuary</td><td class="error-after">February</td></tr>
+                                <tr><td>Punctuation</td><td class="error-before">15th at 3pm</td><td class="error-after">15th, at 3:00 PM</td></tr>
+                                <tr><td>Spelling</td><td class="error-before">avalible</td><td class="error-after">available</td></tr>
+                                <tr><td>Spelling</td><td class="error-before">discus</td><td class="error-after">discuss</td></tr>
+                                <tr><td>Spelling</td><td class="error-before">conserns</td><td class="error-after">concerns</td></tr>
+                                <tr><td>Spelling</td><td class="error-before">valueble</td><td class="error-after">valuable</td></tr>
+                                <tr><td>Grammar</td><td class="error-before">dont hesitate</td><td class="error-after">do not hesitate</td></tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card fade-in" onclick="toggleProject(this)">
+                <div class="project-header">
+                    <span class="project-number">07</span>
+                    <div class="project-tags">
+                        <span class="project-tag accent">Fact Verification</span>
+                        <span class="project-tag">AI Evaluation</span>
+                    </div>
+                </div>
+                <div class="project-body">
+                    <h3 class="project-title">Fact Verification &amp; AI Response Evaluation</h3>
+                    <p class="project-desc">Evaluated an AI-generated response about exercise benefits using a structured 5-criteria rubric, providing detailed justification and constructive feedback to improve factual accuracy and completeness.</p>
+                    <div class="project-preview">
+                        <div class="preview-label">Evaluation Preview</div>
+                        <table class="preview-table">
+                            <tr><th>Criteria</th><th>Score</th><th>Status</th></tr>
+                            <tr><td>Accuracy</td><td>5/5</td><td><span class="score-badge score-high"><i class="fas fa-check"></i> Excellent</span></td></tr>
+                            <tr><td>Completeness</td><td>4/5</td><td><span class="score-badge score-med"><i class="fas fa-minus"></i> Good</span></td></tr>
+                            <tr><td>Clarity</td><td>5/5</td><td><span class="score-badge score-high"><i class="fas fa-check"></i> Excellent</span></td></tr>
+                            <tr><td>Relevance</td><td>5/5</td><td><span class="score-badge score-high"><i class="fas fa-check"></i> Excellent</span></td></tr>
+                            <tr><td>Tone</td><td>5/5</td><td><span class="score-badge score-high"><i class="fas fa-check"></i> Excellent</span></td></tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="project-footer">
+                    <span class="project-expand">View Full Details <i class="fas fa-arrow-right"></i></span>
+                    <span style="color: var(--text-muted); font-size: 0.85rem; font-weight: 700;">4.8/5 Overall</span>
+                </div>
+                <div class="project-detail">
+                    <div class="project-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">Objective</div>
+                            <p class="detail-text">Evaluate an AI-generated response to a user query and provide a score with detailed reasoning using a structured rubric.</p>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">AI Query</div>
+                            <p class="detail-text" style="font-style: italic;">&ldquo;What are the benefits of regular exercise?&rdquo;</p>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">AI Response</div>
+                            <p class="detail-text">&ldquo;Regular exercise can help you lose weight, reduce stress, and improve your mood. It also helps prevent chronic diseases like diabetes and heart disease. You should aim for 30 minutes of exercise each day.&rdquo;</p>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Constructive Feedback</div>
+                            <p class="detail-text">&ldquo;This response is accurate, clear, and directly relevant to the user&rsquo;s query. However, it could be improved by adding a brief example of types of exercise (e.g., walking, strength training, swimming) and mentioning the recommended frequency (e.g., &rsquo;at least 5 days per week&rsquo;). Overall, this is a strong response.&rdquo;</p>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Lesson Learned</div>
+                            <p class="detail-text">Comprehensive responses should include both breadth (covering multiple aspects of the topic) and depth (providing actionable detail).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card fade-in" onclick="toggleProject(this)">
+                <div class="project-header">
+                    <span class="project-number">08</span>
+                    <div class="project-tags">
+                        <span class="project-tag accent">Training Data QA</span>
+                        <span class="project-tag">Content Quality</span>
+                    </div>
+                </div>
+                <div class="project-body">
+                    <h3 class="project-title">Training Data QA &amp; Content Quality Assurance</h3>
+                    <p class="project-desc">Evaluated the quality of informal training data for AI models, balancing real-world language variation against clarity and objectivity needs to improve dataset integrity.</p>
+                    <div class="project-preview">
+                        <div class="preview-label">Quality Assessment</div>
+                        <table class="preview-table">
+                            <tr><th>Criteria</th><th>Score</th><th>Status</th></tr>
+                            <tr><td>Clarity</td><td>4/5</td><td><span class="score-badge score-med"><i class="fas fa-minus"></i> Good</span></td></tr>
+                            <tr><td>Grammar</td><td>4/5</td><td><span class="score-badge score-med"><i class="fas fa-minus"></i> Good</span></td></tr>
+                            <tr><td>Usefulness</td><td>5/5</td><td><span class="score-badge score-high"><i class="fas fa-check"></i> Excellent</span></td></tr>
+                            <tr><td>Objectivity</td><td>3/5</td><td><span class="score-badge score-med"><i class="fas fa-minus"></i> Needs Work</span></td></tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="project-footer">
+                    <span class="project-expand">View Full Details <i class="fas fa-arrow-right"></i></span>
+                    <span style="color: var(--text-muted); font-size: 0.85rem; font-weight: 700;">4.2/5 Overall</span>
+                </div>
+                <div class="project-detail">
+                    <div class="project-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">Objective</div>
+                            <p class="detail-text">Evaluate the quality of training data used to develop AI models, ensuring a balance between real-world language variation and the clarity needed for effective model training.</p>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Training Data Reviewed</div>
+                            <p class="detail-text">&ldquo;The concert was lit. The venue was packed. The music was fire. Everyone was vibing.&rdquo;</p>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Quality Feedback</div>
+                            <p class="detail-text">This text is useful for AI training because it represents real-world, conversational language. However, it contains informal expressions (&ldquo;lit,&rdquo; &ldquo;fire,&rdquo; &ldquo;vibing&rdquo;) that may need to be labeled or explained for AI training purposes. I recommend including it with appropriate labels for informality and tone.</p>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Suggested Improvements</div>
+                            <table class="error-table">
+                                <tr><th>Aspect</th><th>Original</th><th>Suggested</th></tr>
+                                <tr><td>Clarity</td><td class="error-before">&ldquo;The concert was lit&rdquo;</td><td class="error-after">&ldquo;The concert was very exciting&rdquo;</td></tr>
+                                <tr><td>Specificity</td><td class="error-before">&ldquo;The music was fire&rdquo;</td><td class="error-after">&ldquo;The music was excellent&rdquo;</td></tr>
+                                <tr><td>Description</td><td class="error-before">&ldquo;Everyone was vibing&rdquo;</td><td class="error-after">&ldquo;Everyone was enjoying themselves&rdquo;</td></tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card fade-in" onclick="toggleProject(this)">
+                <div class="project-header">
+                    <span class="project-number">09</span>
+                    <div class="project-tags">
+                        <span class="project-tag accent">Prompt Assessment</span>
+                        <span class="project-tag">Evaluation</span>
+                    </div>
+                </div>
+                <div class="project-body">
+                    <h3 class="project-title">Prompt Engineering Evaluation &amp; Assessment</h3>
+                    <p class="project-desc">Evaluated a prompt-engineering example and provided actionable feedback to improve clarity, length specification, and structure guidance for optimal AI performance.</p>
+                    <div class="project-preview">
+                        <div class="preview-label">Prompt Score</div>
+                        <table class="preview-table">
+                            <tr><th>Criteria</th><th>Score</th><th>Status</th></tr>
+                            <tr><td>Clarity</td><td>5/5</td><td><span class="score-badge score-high"><i class="fas fa-check"></i> Excellent</span></td></tr>
+                            <tr><td>Audience Definition</td><td>5/5</td><td><span class="score-badge score-high"><i class="fas fa-check"></i> Excellent</span></td></tr>
+                            <tr><td>Length Specification</td><td>3/5</td><td><span class="score-badge score-med"><i class="fas fa-minus"></i> Needs Work</span></td></tr>
+                            <tr><td>Structure Guidance</td><td>3/5</td><td><span class="score-badge score-med"><i class="fas fa-minus"></i> Needs Work</span></td></tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="project-footer">
+                    <span class="project-expand">View Full Details <i class="fas fa-arrow-right"></i></span>
+                    <span style="color: var(--text-muted); font-size: 0.85rem; font-weight: 700;">4.2/5 Overall</span>
+                </div>
+                <div class="project-detail">
+                    <div class="project-detail-inner">
+                        <div class="detail-section">
+                            <div class="detail-label">Objective</div>
+                            <p class="detail-text">Evaluate a prompt-engineering example and provide actionable feedback to improve clarity, length specification, and structure guidance.</p>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Original Prompt</div>
+                            <p class="detail-text">&ldquo;Write a brief summary of climate change for a general audience.&rdquo;</p>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Suggested Improved Prompt</div>
+                            <p class="detail-text">&ldquo;Write a 3-4 sentence summary of climate change for a general audience. Explain what causes it, its main effects, and one action individuals can take to help. Keep the tone informative and neutral.&rdquo;</p>
+                        </div>
+                        <div class="detail-section">
+                            <div class="detail-label">Comparison</div>
+                            <table class="error-table">
+                                <tr><th>Aspect</th><th>Original</th><th>Improved</th></tr>
+                                <tr><td>Length</td><td class="error-before">Not specified</td><td class="error-after">3-4 sentences</td></tr>
+                                <tr><td>Content</td><td class="error-before">General summary</td><td class="error-after">Causes, effects, action</td></tr>
+                                <tr><td>Structure</td><td class="error-before">Not specified</td><td class="error-after">Clear components</td></tr>
+                                <tr><td>Tone</td><td class="error-before">Not specified</td><td class="error-after">Informative, neutral</td></tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="achievements">
+        <div class="section-header fade-in">
+            <span class="section-label">Key Achievements</span>
+            <h2 class="section-title">What I Have Accomplished</h2>
+            <p class="section-desc">A record of excellence, reliability, and continuous improvement across engineering and evaluation.</p>
+        </div>
+        <div class="achievements-grid">
+            <div class="achievement-card fade-in">
+                <div class="achievement-icon"><i class="fas fa-rocket"></i></div>
+                <h4>9 Production Systems Built</h4>
+                <p>End-to-end eval harnesses, agentic systems, RAG pipelines, and monitoring dashboards in Python, Go, and Rust.</p>
+            </div>
+            <div class="achievement-card fade-in">
+                <div class="achievement-icon"><i class="fas fa-bullseye"></i></div>
+                <h4>90%+ Accuracy Standards</h4>
+                <p>Maintained consistent quality across 5+ years of AI evaluation work on Mercor, Apple Baseline, and CrowdGen.</p>
+            </div>
+            <div class="achievement-card fade-in">
+                <div class="achievement-icon"><i class="fas fa-clock"></i></div>
+                <h4>100% Deadline Record</h4>
+                <p>Self-managed high-volume annotation queues across multiple concurrent projects with zero missed deadlines.</p>
+            </div>
+            <div class="achievement-card fade-in">
+                <div class="achievement-icon"><i class="fas fa-robot"></i></div>
+                <h4>500+ Prompts Authored</h4>
+                <p>Created and evaluated base prompts for a frontier AI research partner's large-scale SFT project, informing model training cycles.</p>
+            </div>
+            <div class="achievement-card fade-in">
+                <div class="achievement-icon"><i class="fas fa-chart-line"></i></div>
+                <h4>42% Inference Cost Cut</h4>
+                <p>Built an intelligent LLM router that reduced API costs by 42% with <2% accuracy degradation through semantic routing.</p>
+            </div>
+            <div class="achievement-card fade-in">
+                <div class="achievement-icon"><i class="fas fa-code-branch"></i></div>
+                <h4>80% Eval Time Saved</h4>
+                <p>Automated evaluation harness integrated into CI/CD, eliminating manual regression testing on every model update.</p>
+            </div>
+            <div class="achievement-card fade-in">
+                <div class="achievement-icon"><i class="fas fa-file-powerpoint"></i></div>
+                <h4>15+ Executive Reports</h4>
+                <p>Authored executive-level slide decks and technical reports translating complex econometric findings for senior OPEC stakeholders.</p>
+            </div>
+            <div class="achievement-card fade-in">
+                <div class="achievement-icon"><i class="fas fa-language"></i></div>
+                <h4>Multilingual Evaluation</h4>
+                <p>Native fluency in English and Hausa/Fulani, plus Advanced Arabic — enabling nuanced evaluation of diverse multilingual content.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="education">
+        <div class="section-header fade-in">
+            <span class="section-label">Education &amp; Certifications</span>
+            <h2 class="section-title">Academic Background</h2>
+            <p class="section-desc">A strong analytical foundation supporting every system I build and evaluate.</p>
+        </div>
+        <div class="edu-grid">
+            <div class="edu-card fade-in">
+                <div class="edu-icon"><i class="fas fa-graduation-cap"></i></div>
+                <h4>Master of Science (M.S.) in Data Science</h4>
+                <p class="institution">University of San Francisco (USF)</p>
+                <p class="year">July 2022 &ndash; June 2023 &middot; 1-Year MSDS Program</p>
+                <ul class="cert-list">
+                    <li><i class="fas fa-check-circle"></i> Linear Algebra, Statistical Modeling, Experiment Design &amp; A/B Testing</li>
+                    <li><i class="fas fa-check-circle"></i> Python &amp; SQL for Data Analysis</li>
+                    <li><i class="fas fa-check-circle"></i> Case Study: Analyzed experimentation design and metric tradeoffs (CTR, retention, guardrail KPIs)</li>
+                </ul>
+            </div>
+            <div class="edu-card fade-in">
+                <div class="edu-icon"><i class="fas fa-school"></i></div>
+                <h4>Bachelor of Science (B.Sc.) in Statistics</h4>
+                <p class="institution">Columbia University in the City of New York</p>
+                <p class="year">Graduated June 2019</p>
+                <ul class="cert-list">
+                    <li><i class="fas fa-check-circle"></i> Statistical Modeling, Data Analysis, Econometrics, Research Methods</li>
+                    <li><i class="fas fa-check-circle"></i> Survey Sampling, Machine Learning</li>
+                    <li><i class="fas fa-check-circle"></i> Academic Project: Python analysis of household income/expenditure survey dataset</li>
+                </ul>
+            </div>
+            <div class="edu-card fade-in">
+                <div class="edu-icon"><i class="fas fa-certificate"></i></div>
+                <h4>Professional Certifications</h4>
+                <ul class="cert-list">
+                    <li><i class="fas fa-check-circle"></i> AI For Everyone &mdash; DeepLearning.AI (2026)</li>
+                    <li><i class="fas fa-check-circle"></i> Google Data Analytics Professional Certificate &mdash; Coursera (2026)</li>
+                    <li><i class="fas fa-check-circle"></i> Advanced Excel for Data Analysis &mdash; Udemy / NYSC SDGs</li>
+                    <li><i class="fas fa-check-circle"></i> Introduction to Project Management &mdash; Alison / LinkedIn Learning</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact">
+        <div class="contact-section fade-in">
+            <div class="contact-content">
+                <h2>Let's Build Something Together</h2>
+                <p>I am available for immediate remote work. Whether you need AI systems engineering, evaluation infrastructure, agentic systems, or technical documentation — I am ready to deliver excellence.</p>
+                <div class="contact-grid">
+                    <a href="mailto:elninodollar@gmail.com" class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div class="info">
+                            <span class="label">Email</span>
+                            <span class="value">elninodollar@gmail.com</span>
+                        </div>
+                    </a>
+                    <a href="tel:+2348135456661" class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <div class="info">
+                            <span class="label">Phone</span>
+                            <span class="value">+234 813 545 6661</span>
+                        </div>
+                    </a>
+                    <div class="contact-item">
+                        <i class="fas fa-location-dot"></i>
+                        <div class="info">
+                            <span class="label">Location</span>
+                            <span class="value">Abuja, FCT, Nigeria</span>
+                        </div>
+                    </div>
+                    <a href="https://github.com/elninoahmad" target="_blank" rel="noopener noreferrer" class="contact-item">
+                        <i class="fab fa-github"></i>
+                        <div class="info">
+                            <span class="label">GitHub</span>
+                            <span class="value">@elninoahmad</span>
+                        </div>
+                    </a>
+                    <a href="https://www.linkedin.com/in/elnino-dollar-2420103b0/" target="_blank" rel="noopener noreferrer" class="contact-item">
+                        <i class="fab fa-linkedin"></i>
+                        <div class="info">
+                            <span class="label">LinkedIn</span>
+                            <span class="value">Connect with me</span>
+                        </div>
+                    </a>
+                </div>
+                <a href="mailto:elninodollar@gmail.com" class="btn-contact">
+                    <i class="fas fa-paper-plane"></i>
+                    Send Me an Email
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Abdullahi Ahmad Aminu. All rights reserved. | Polyglot AI Engineer</p>
+        <p style="margin-top: 0.5rem; font-size: 0.8rem;">Production eval harnesses, agentic systems, and RLHF infrastructure. Python · Go · Rust · TypeScript</p>
+    </footer>
+
+    <script>
+        function toggleProject(card) {
+            const detail = card.querySelector('.project-detail');
+            const expand = card.querySelector('.project-expand');
+            const isOpen = detail.classList.contains('open');
+            document.querySelectorAll('.project-detail.open').forEach(d => {
+                if (d !== detail) d.classList.remove('open');
+            });
+            document.querySelectorAll('.project-expand').forEach(e => {
+                if (e !== expand) e.innerHTML = 'View Details <i class="fas fa-arrow-right"></i>';
+            });
+            if (isOpen) {
+                detail.classList.remove('open');
+                expand.innerHTML = 'View Details <i class="fas fa-arrow-right"></i>';
+            } else {
+                detail.classList.add('open');
+                expand.innerHTML = 'Hide Details <i class="fas fa-arrow-up"></i>';
+            }
+        }
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    if (entry.target.classList.contains('skill-card')) {
+                        entry.target.classList.add('visible');
+                    }
+                }
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.fade-in, .skill-card').forEach(el => observer.observe(el));
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('.nav-links a');
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                if (scrollY >= sectionTop) {
+                    current = section.getAttribute('id');
+                }
+            });
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+        function toggleMobileMenu() {
+            const navLinks = document.querySelector('.nav-links');
+            const isVisible = navLinks.style.display === 'flex';
+            if (isVisible) {
+                navLinks.style.display = 'none';
+            } else {
+                navLinks.style.display = 'flex';
+                navLinks.style.position = 'absolute';
+                navLinks.style.top = '64px';
+                navLinks.style.left = '0';
+                navLinks.style.right = '0';
+                navLinks.style.flexDirection = 'column';
+                navLinks.style.background = 'var(--card)';
+                navLinks.style.padding = '1rem 2rem';
+                navLinks.style.boxShadow = 'var(--shadow-lg)';
+                navLinks.style.borderBottom = '1px solid var(--border)';
+                navLinks.style.gap = '1rem';
+                navLinks.style.zIndex = '999';
+            }
+        }
+    </script>
+</body>
+</html>
